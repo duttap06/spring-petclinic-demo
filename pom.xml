@@ -256,4 +256,12 @@
     </pluginRepository>
   </pluginRepositories>
 
+  <profiles>
+    <profile>
+      <id>s2i</id>
+      <build>
+        <finalName>${project.artifactId}</finalName>
+      </build>
+    </profile>
+  </profiles>
 </project>
