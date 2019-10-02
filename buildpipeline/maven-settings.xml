@@ -12,4 +12,23 @@
 			<password>${env.NEXUS_PASSWORD}</password>
 		</server>
 	</servers>
+
+	<mirrors>
+        <mirror>
+            <id>belastingdienst.repo</id>
+            <mirrorOf>*,!spring-milestones,!spring-snapshots</mirrorOf>
+            <url>http://rms.belastingdienst.nl/repo</url>
+        </mirror>
+    </mirrors>
+
+    <proxies>
+        <proxy>
+            <id>belastingdienst</id>
+            <active>true</active>
+            <protocol>https</protocol>
+            <host>vip50.belastingdienst.nl</host>
+            <port>8080</port>
+        </proxy>
+	</proxies>
+	
 </settings>
