@@ -15,7 +15,7 @@ items:
     runPolicy: Serial
     source:
       git:
-        ref: develop
+        ref: master
         uri: "ssh://git@git.belastingdienst.nl:7999/~wolfj09/spring-petclinic.git"
     strategy:
       jenkinsPipelineStrategy:
