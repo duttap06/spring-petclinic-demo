@@ -55,7 +55,7 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster() {
-                        openshift.newBuild("--name=petclinic", "-i=cos/openjdk18-openshift:1.6", "--binary=true")
+                        openshift.newBuild("--name=petclinic", "-i=public/openjdk18-openshift:1.6", "--binary=true")
                     }
                 }
             }
