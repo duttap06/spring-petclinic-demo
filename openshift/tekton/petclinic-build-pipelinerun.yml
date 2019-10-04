@@ -1,0 +1,16 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: petclinic-build
+spec:
+  pipelineRef:
+    name: petclinic-build-pipeline
+  trigger:
+    type: manual
+  serviceAccounts:
+    - taskName: build
+      serviceAccount: petclinic-build-bot
+  resources:
+    - name: source-repo
+      resourceRef:
+        name: petclinic-git

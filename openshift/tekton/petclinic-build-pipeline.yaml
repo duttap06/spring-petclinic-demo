@@ -1,0 +1,19 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: petclinic-build-pipeline
+spec:
+  resources:
+  - name: petclinic-  git
+    type: git
+  tasks:
+  - name: build
+    taskRef:
+      name: maven-build
+    env:
+      - name: GIT_SSL_NO_VERIFY
+        value: "true"
+    resources:
+      inputs:
+      - name: workspace-git
+        resource: petclinic-git

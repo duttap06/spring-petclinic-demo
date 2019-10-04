@@ -1,0 +1,8 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: petclinic-build-taskrun
+spec:
+  serviceAccount: petclinic-build-bot
+  taskRef:
+    name: maven-build
