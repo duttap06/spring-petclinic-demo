@@ -48,14 +48,14 @@ pipeline {
             when {
                 expression {
                     openshift.withCluster() {
-                        return !openshift.selector("bc", "petclinic").exists();
+                        return !openshift.selector("bc", "${appName}").exists();
                     }
                 }
             }
             steps {
                 script {
                     openshift.withCluster() {
-                        openshift.newBuild("--name=petclinic", "-i=public/openjdk18-openshift:1.6", "--binary=true")
+                        openshift.newBuild("--name=${appName}", "-i=public/openjdk18-openshift:1.6", "--binary=true")
                     }
                 }
             }
@@ -68,7 +68,7 @@ pipeline {
                 unstash 'jar'
                 script {
                     openshift.withCluster() {
-                        openshift.selector("bc", "petclinic").startBuild("--from-file=target/spring-petclinic.jar", "--wait=true")
+                        openshift.selector("bc", "${appName}").startBuild("--from-file=target/spring-petclinic.jar", "--wait=true")
                     }
                 }
             }
@@ -77,30 +77,30 @@ pipeline {
             when {
                 expression {
                     openshift.withCluster() {
-                        return !openshift.selector('dc', 'petclinic').exists()
+                        return !openshift.selector('dc', "${appName}").exists()
                     }
                 }
             }
             steps {
                 script {
                     openshift.withCluster() {
-                        def app = openshift.newApp("petclinic:latest")
-                        openshift.raw('create route edge --service=petclinic --port=8080');
-                        //app.narrow("svc").expose();
-
-                        // geen triggers op redeploy wanneer het image veranderd. Jenkins is in control
-                        openshift.set("triggers", "dc/petclinic", "--manual")
-                        //openshift.set("probe dc/petclinic --readiness --get-url=http://:8080/health --initial-delay-seconds=30 --failure-threshold=10 --period-seconds=10")
-                        //openshift.set("probe dc/petclinic --liveness  --get-url=http://:8080/health --initial-delay-seconds=30 --failure-threshold=10 --period-seconds=10")
-                        def dc = openshift.selector("dc", "petclinic")
-                        
-                        //door newApp() wordt er gelijk al een deployment gestart, ondanks de manual triggers
-
-                        // wachten tot alle replicas beschikbaar zijn.
-                        while (dc.object().spec.replicas != dc.object().status.availableReplicas) {
-                            echo "Wait for all replicas are available"
-                            sleep 10
+                        // ruim eerst de objecten als die zijn blijven staan
+                        if (openshift.selector('dc', "${appName}").exists()) {
+                            openshift.selector('dc', "${appName}").delete()
                         }
+                        if (openshift.selector('svc', "${appName}").exists()) {
+                            openshift.selector('svc', "${appName}").delete()
+                        }
+                        if (openshift.selector('route', "${appName}").exists()) {
+                            openshift.selector('route', "${appName}").delete()
+                        }
+                        
+                        result = openshift.raw("apply", "-f openshift/petclinic-template-ont.yaml")
+                        // dit template moet een deployment hebben van het image met tag 'latest'
+                        // er zit geen trigger in om te deployen bij image change
+
+                        // stel dat het trigger er toch is, deze op manual zetten, Jenkins is in control
+                        openshift.set("triggers", "dc/${appName}", "--manual")
                     }
                 }
             }
@@ -109,7 +109,7 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster() {
-                        def dc = openshift.selector("dc", "petclinic")
+                        def dc = openshift.selector("dc", "${appName}")
                         dc.rollout().latest();
                         // wachten tot alle replicas beschikbaar zijn.
                         while (dc.object().spec.replicas != dc.object().status.availableReplicas) {
