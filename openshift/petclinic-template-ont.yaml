@@ -66,14 +66,15 @@ items:
         terminationGracePeriodSeconds: 30
     test: false
     triggers:
-      type: ImageChange
-      imageChangeParams:
+    - type: ConfigChange
+    - imageChangeParams:
         automatic: false
         containerNames:
         - petclinic
         from:
           kind: ImageStreamTag
           name: petclinic:latest
+      type: ImageChange
   status: {}
 - apiVersion: v1
   kind: Service
