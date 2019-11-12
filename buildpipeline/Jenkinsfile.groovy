@@ -74,6 +74,9 @@ pipeline {
             }
         }
         stage('Create deployment in O') {
+            agent {
+                label "jos-m3-openjdk8"
+            }
             when {
                 expression {
                     openshift.withCluster() {
