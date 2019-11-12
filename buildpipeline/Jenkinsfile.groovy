@@ -82,6 +82,7 @@ pipeline {
                 }
             }
             steps {
+                unstash 'ws'
                 script {
                     openshift.withCluster() {
                         // ruim eerst de objecten als die zijn blijven staan
