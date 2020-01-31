@@ -38,11 +38,6 @@ pipeline {
                 unstash 'ws'
                 sh(script: "${mvnCmd} test -DskipTests")
             }
-            post {
-				success {
-					junit '**/surefire-reports/**/*.xml'
-				}
-            }
 		}
         stage('Create Image Builder') {
             when {
