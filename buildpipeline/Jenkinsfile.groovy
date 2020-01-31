@@ -36,7 +36,7 @@ pipeline {
             }
             steps {
                 unstash 'ws'
-                sh(script: "${mvnCmd} test")
+                sh(script: "${mvnCmd} test -DskipTests")
             }
             post {
 				success {
